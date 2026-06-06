@@ -1,0 +1,27 @@
+{
+  "title": "MediRemind",
+  "slug": "mediremind",
+  "description": "AI-powered medication reminder platform that extracts prescription details from images and delivers timely medicine alerts through Telegram.",
+  "overview": "# MediRemind\n\nMediRemind is an application that simplifies medication tracking. Users can upload an image of their medical prescription, and the system automatically extracts the medication details, schedules timings, and sends alerts via Telegram when it is time to take the medicine.\n\n## Architecture Overview\n\nThe system is broken down into three main components: a Next.js frontend, a FastAPI backend, and an external LLM microservice for image processing.\n\n```mermaid\ngraph TD\n    Client[Next.js Frontend] -->|Uploads Image| Backend[FastAPI Backend]\n    Backend -->|Forwards Image Bytes| LLM[LLM API Service]\n    LLM -->|Returns Structured JSON| Backend\n    Backend -->|Saves Prescription & Reminders| DB[(MongoDB)]\n    Scheduler[APScheduler] -->|Polls for Due Reminders| DB\n    Scheduler -->|Pushes Notifications| Telegram[Telegram API]\n    Telegram -->|Delivers Alert| UserDevice[User's Telegram App]\n```\n\n### 1. Frontend\nBuilt with Next.js 15, React, and Tailwind CSS. It provides the user interface for authenticating, uploading prescriptions via drag-and-drop, and managing active reminders from a dashboard.\n\n### 2. Backend\nBuilt with Python and FastAPI. It handles core application logic, authenticates users via JWT, stores data in MongoDB, and runs a background task using APScheduler. The scheduler continuously checks the database for reminders that are due and pushes notifications to the user's connected Telegram Chat ID.\n\n### 3. LLM Service\nTo handle the optical character recognition and data extraction from prescription images, this project relies on a separate standalone microservice. \n\nYou can find the service repository here: [Siddharth-Jaswal/LLM-SERVICE](https://github.com/Siddharth-Jaswal/LLM-SERVICE)\n\nRather than storing user images on the hard drive, the FastAPI backend holds the uploaded image temporarily in memory and passes it directly to this LLM service. The LLM service analyzes the image and returns a clean, structured JSON payload containing the medicine names, dosages, and food instructions, which is then parsed and saved to the database.\n\n## Prerequisites\n\nBefore running the application, ensure you have the following installed on your machine:\n- Node.js\n- Python 3.x\n- MongoDB (running locally on default port 27017)\n- A Telegram Bot Token (obtained by talking to BotFather on Telegram)\n\nYou will also need to clone and run the LLM Service mentioned above.\n\n## Setup and Configuration\n\n### 1. Start the LLM Service\nClone the LLM-SERVICE repository and follow its specific instructions to get it running on your local machine. By default, the MediRemind backend expects this service to be accessible locally.\n\n### 2. Configure the Backend\nNavigate to the backend directory and set up the Python environment:\n\n```bash\ncd backend\npython -m venv .venv\nsource .venv/Scripts/activate  # On Windows\npip install -r requirements.txt\n```\n\nCreate a `.env` file inside the `backend` directory with the following variables:\n\n```env\nMONGODB_URL=\"mongodb://localhost:27017\"\nDATABASE_NAME=\"mediremind\"\nTELEGRAM_BOT_TOKEN=\"your_telegram_bot_token_here\"\nJWT_SECRET=\"generate_a_random_secret_string\"\nLLM_SERVICE_URL=\"http://localhost:8000/vision\"\n```\n\nStart the backend server:\n```bash\nuvicorn app.main:app --reload --port 8001\n```\n\n### 3. Configure the Frontend\nOpen a new terminal, navigate to the frontend directory, and install dependencies:\n\n```bash\ncd frontend\nnpm install\n```\n\nStart the development server:\n```bash\nnpm run dev\n```\n\n## Usage\n\n1. Open your browser and navigate to `http://localhost:3000`.\n2. Create an account or log in.\n3. In the dashboard settings, connect your Telegram account by providing your Chat ID.\n4. Upload a prescription image. The LLM service will extract the details.\n5. Review the extracted medicines and save them.\n6. The dashboard allows you to assign specific times for each medicine.\n7. You will receive an automated Telegram message whenever a reminder is due.\n",
+  "challenges": "",
+  "learnings": "",
+  "technologies": [
+    "Next.js",
+    "FastAPI",
+    "MongoDB",
+    "LLM Service"
+  ],
+  "tags": [
+    "Healthcare",
+    "OCR",
+    "Notifications",
+    "Microservices"
+  ],
+  "bannerImage": "/api/assets?path=content%2Fassets%2F1780742414888-ChatGPT%20Image%20Jun%206%2C%202026%2C%2004_10_01%20PM.png",
+  "galleryImages": [],
+  "githubUrl": "https://github.com/Siddharth-Jaswal/Medi-Remind-V2.git",
+  "liveUrl": "",
+  "featured": true,
+  "createdAt": "2026-06-06T10:40:24.587Z",
+  "updatedAt": "2026-06-06T10:40:24.587Z"
+}
